@@ -8,3 +8,5 @@ urlpatterns = [
     path('place-details/', views.place_details, name='place_details'),
     #path('', show_mysite),
 ]
+
+
