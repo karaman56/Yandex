@@ -1,5 +1,5 @@
 from django.http import JsonResponse
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from places.models import Place, Image
 import json
 
@@ -21,7 +21,8 @@ def index(request):
       "properties": {
         "title": place.title,
         "placeId": place.id,
-        "detailsUrl": "/place-details/"
+        # Изменяем на новый endpoint
+        "detailsUrl": f"/places/{place.id}/"
       }
     }
     geojson["features"].append(feature)
@@ -30,6 +31,25 @@ def index(request):
   return render(request, 'myyandex/index.html', {'places_json': places_json})
 
 
+# Новый endpoint для API (требование задания)
+def place_json(request, place_id):
+  place = get_object_or_404(Place, id=place_id)
+  images = place.images.order_by('position')
+
+  return JsonResponse({
+    'title': place.title,
+    'imgs': [request.build_absolute_uri(image.image.url) for image in images],
+    'description_short': place.description_short,
+    'description_long': place.description_long,
+    # Добавляем координаты для полноты данных
+    'coordinates': {
+      'lng': place.lng,
+      'lat': place.lat,
+    }
+  }, json_dumps_params={'ensure_ascii': False, 'indent': 2})
+
+
+# Старый endpoint можно оставить для обратной совместимости
 def place_details(request):
   place_id = request.GET.get('place_id')
 
@@ -37,18 +57,7 @@ def place_details(request):
     return JsonResponse({'error': 'Missing place_id parameter'}, status=400)
 
   try:
-    place_id = int(place_id)
-    place = Place.objects.get(id=place_id)
-    images = place.images.all().order_by('position')
-    place_data = {
-      'title': place.title,
-      'imgs': [request.build_absolute_uri(image.image.url) for image in images],
-      'description_short': place.description_short,
-      'description_long': place.description_long,
-    }
-    return JsonResponse(place_data)
-  except (ValueError, TypeError):
+    # Перенаправляем на новый формат API
+    return place_json(request, int(place_id))
+  except ValueError:
     return JsonResponse({'error': 'Invalid place_id format'}, status=400)
-  except Place.DoesNotExist:
-    return JsonResponse({'error': 'Place not found'}, status=404)
-
