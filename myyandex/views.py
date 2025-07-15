@@ -21,7 +21,6 @@ def index(request):
       "properties": {
         "title": place.title,
         "placeId": place.id,
-        # Изменяем на новый endpoint
         "detailsUrl": f"/places/{place.id}/"
       }
     }
@@ -31,7 +30,7 @@ def index(request):
   return render(request, 'myyandex/index.html', {'places_json': places_json})
 
 
-# Новый endpoint для API (требование задания)
+
 def place_json(request, place_id):
   place = get_object_or_404(Place, id=place_id)
   images = place.images.order_by('position')
@@ -41,7 +40,7 @@ def place_json(request, place_id):
     'imgs': [request.build_absolute_uri(image.image.url) for image in images],
     'description_short': place.description_short,
     'description_long': place.description_long,
-    # Добавляем координаты для полноты данных
+
     'coordinates': {
       'lng': place.lng,
       'lat': place.lat,
@@ -49,7 +48,7 @@ def place_json(request, place_id):
   }, json_dumps_params={'ensure_ascii': False, 'indent': 2})
 
 
-# Старый endpoint можно оставить для обратной совместимости
+
 def place_details(request):
   place_id = request.GET.get('place_id')
 
@@ -57,7 +56,7 @@ def place_details(request):
     return JsonResponse({'error': 'Missing place_id parameter'}, status=400)
 
   try:
-    # Перенаправляем на новый формат API
+
     return place_json(request, int(place_id))
   except ValueError:
     return JsonResponse({'error': 'Invalid place_id format'}, status=400)

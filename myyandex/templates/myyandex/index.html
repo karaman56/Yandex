@@ -252,8 +252,8 @@
       sidebarApp.loadingPlaceId = null;
     })
 
-    async function loadPlaceInfo(placeId){
-  const url = "{% url 'place_details' %}?place_id=" + placeId;
+    async function loadPlaceInfo(placeId, detailsUrl) {
+  const url = detailsUrl; // Используем URL из GeoJSON
 
   sidebarApp.selectedPlace = null;
   sidebarApp.loadingPlaceId = placeId;
@@ -262,13 +262,10 @@
     let response = await fetch(url);
     let data = await response.json();
 
-    // УДАЛИТЕ эту строку - больше не нужно добавлять префикс вручную
-    // const processedImgs = data.imgs.map(img => {...});
-
     sidebarApp.selectedPlace = {
       title: data.title,
       placeId: placeId,
-      imgs: data.imgs || [], // Используем готовые URL из бэкенда
+      imgs: data.imgs || [],
       short_description: data.description_short,
       long_description: data.description_long,
     };
@@ -277,9 +274,9 @@
   } finally {
     if (sidebarApp.loadingPlaceId == placeId) {
       sidebarApp.loadingPlaceId = null;
-        }
-      }
     }
+  }
+}
   </script>
 </body>
 </html>
