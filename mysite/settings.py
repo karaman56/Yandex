@@ -22,6 +22,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'myyandex.apps.MyyandexConfig',
     'places.apps.PlacesConfig',
+    'adminsortable2',
 ]
 
 MIDDLEWARE = [
