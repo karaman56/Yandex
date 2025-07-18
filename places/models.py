@@ -1,16 +1,16 @@
 from django.db import models
-from django.db import models
+from tinymce.models import HTMLField
 
 
 class Place(models.Model):
-  title = models.CharField("Название места", max_length=255)
-  description_short = models.TextField("Краткое описание")
-  description_long = models.TextField("Подробное описание")
-  lat = models.FloatField("Широта")
-  lng = models.FloatField("Долгота")
+    title = models.CharField("Название места", max_length=255)
+    description_short = models.TextField("Краткое описание")
+    description_long = HTMLField("Подробное описание")
+    lat = models.FloatField("Широта")
+    lng = models.FloatField("Долгота")
 
-  def __str__(self):
-    return self.title
+    def __str__(self):
+        return self.title
 
 
 class Image(models.Model):

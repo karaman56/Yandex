@@ -9,6 +9,7 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('place-details/', views.place_details, name='place_details'),
     path('places/<int:place_id>/', views.place_json, name='place_json'),
+    path('tinymce/', include('tinymce.urls')),
     #path('', show_mysite),
 ]
 

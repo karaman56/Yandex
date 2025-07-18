@@ -23,6 +23,7 @@ INSTALLED_APPS = [
     'myyandex.apps.MyyandexConfig',
     'places.apps.PlacesConfig',
     'adminsortable2',
+    'tinymce',
 ]
 
 MIDDLEWARE = [
@@ -97,3 +98,13 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+TINYMCE_DEFAULT_CONFIG = {
+    'height': 300,
+    'width': 800,
+    'menubar': False,
+    'plugins': 'link lists',
+    'toolbar': 'undo redo | bold italic | bullist numlist | link',
+    'language': 'ru',
+}
