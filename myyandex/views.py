@@ -1,6 +1,6 @@
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404
-from places.models import Place, Image
+from .models import Place, Image
 import json
 
 
@@ -10,6 +10,7 @@ def index(request):
       "type": "FeatureCollection",
       "features": []
     }
+
     for place in places:
         feature = {
           "type": "Feature",
@@ -23,7 +24,8 @@ def index(request):
             "detailsUrl": f"/places/{place.id}/"
           }
         }
-      geojson["features"].append(feature)
+        geojson["features"].append(feature)
+
     places_json = json.dumps(geojson, ensure_ascii=False, indent=2)
     return render(request, 'myyandex/index.html', {'places_json': places_json})
 
@@ -51,3 +53,8 @@ def place_details(request):
         return place_json(request, int(place_id))
     except ValueError:
         return JsonResponse({'error': 'Invalid place_id format'}, status=400)
+
+
+
+
+

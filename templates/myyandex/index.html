@@ -63,7 +63,7 @@
 
         <h5 class="mb-3">{{ selectedPlace.title }}</h5>
 
-        <p>{{ selectedPlace.short_description }}</p>
+        <p>{{ selectedPlace.description_short }}</p>
 
         <div id="place-photos" class="carousel slide mb-3 shadow" data-ride="carousel" data-interval="5000">
           <ol class="carousel-indicators">
@@ -90,7 +90,7 @@
           </template>
         </div>
 
-        <div v-html="selectedPlace.long_description"></div>
+        <div v-html="selectedPlace.description_long"></div>
       </div>
     </div>
   </script>
@@ -263,12 +263,12 @@
     let data = await response.json();
 
     sidebarApp.selectedPlace = {
-      title: data.title,
-      placeId: placeId,
-      imgs: data.imgs || [],
-      short_description: data.description_short,
-      long_description: data.description_long,
-    };
+    title: data.title,
+    placeId: placeId,
+    imgs: data.imgs || [],
+    description_short: data.description_short,
+    description_long: data.description_long,
+};
   } catch (error) {
     console.error("Ошибка при загрузке данных:", error);
   } finally {
