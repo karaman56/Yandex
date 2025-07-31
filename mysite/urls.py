@@ -11,7 +11,6 @@ urlpatterns = [
     path('places/<int:place_id>/', views.place_json, name='place_json'),
     path('tinymce/', include('tinymce.urls')),
 
-
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
