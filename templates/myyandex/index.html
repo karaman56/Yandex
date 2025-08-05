@@ -40,14 +40,14 @@
     }
   </style>
   <script id="places-geojson" type="application/json">
-  {{ places_json|safe }}
-</script>
+    {{ places_json|safe }}
+  </script>
 
+  {% verbatim %}
   <script id="app-template" type="text/template">
     <div v-bind:class="{'sidebar-content': 1, 'bg-white': selectedPlace, 'bg-secondary': !selectedPlace}">
       <div v-if="promptVisible" class="d-flex flex-column justify-content-center align-items-center" style="height: 100%;">
-        <img class="d-block select-place-prompt mb-4" src="{% static 'myyandex/images/hand-pointer-regular.svg' %}" alt="Select place">
-
+        <img class="d-block select-place-prompt mb-4" src="/static/myyandex/images/hand-pointer-regular.svg" alt="Select place">
         <h4>Выберите место на карте</h4>
       </div>
 
@@ -58,12 +58,10 @@
       </div>
 
       <div class="place-description" v-if="selectedPlace">
-
         <img v-if="mainPhotoSrc" v-bind:src="mainPhotoSrc" class="d-block shadow mb-3 rounded" v-bind:alt="selectedPlace.title">
 
-        <h5 class="mb-3">{{ selectedPlace.title }}</h5>
-
-        <p>{{ selectedPlace.description_short }}</p>
+        <h5 class="mb-3" v-text="selectedPlace.title"></h5>
+        <p v-text="selectedPlace.description_short"></p>
 
         <div id="place-photos" class="carousel slide mb-3 shadow" data-ride="carousel" data-interval="5000">
           <ol class="carousel-indicators">
@@ -94,7 +92,7 @@
       </div>
     </div>
   </script>
-
+  {% endverbatim %}
 </head>
 <body>
   <div id="sidebar">
@@ -165,7 +163,6 @@
     let places = loadJSON('places-geojson');
     log.debug('Load GeoJSON for places', places);
 
-
     L.geoJSON(places, {
         pointToLayer: function(geoJsonPoint, latlng) {
           if (geoJsonPoint.geometry.type != "Point"){
@@ -205,12 +202,7 @@
       template: document.getElementById('app-template').innerHTML,
       data: {
         loadingPlaceId: null,
-        selectedPlace: null,  // object with attributes specified below
-          // title
-          // placeId
-          // imgs
-          // short_description
-          // long_description
+        selectedPlace: null,
       },
       computed: {
         promptVisible: function () {
@@ -234,14 +226,11 @@
       },
       updated: function () {
         this.$nextTick(function () {
-          // Код, будет запущен только после обновления всех представлений
           $('#place-photos').carousel();
         })
       },
       methods: {
         handlePhotosClick: function(slideId='next') {
-          // default event handlers of Bootstrap Carousel conflict with Leaflet
-          // so custom handler will mimic expected carousel behaviour
           $('#place-photos').carousel(slideId);
         }
       },
@@ -253,30 +242,30 @@
     })
 
     async function loadPlaceInfo(placeId, detailsUrl) {
-  const url = detailsUrl; // Используем URL из GeoJSON
+      const url = detailsUrl;
 
-  sidebarApp.selectedPlace = null;
-  sidebarApp.loadingPlaceId = placeId;
+      sidebarApp.selectedPlace = null;
+      sidebarApp.loadingPlaceId = placeId;
 
-  try {
-    let response = await fetch(url);
-    let data = await response.json();
+      try {
+        let response = await fetch(url);
+        let data = await response.json();
 
-    sidebarApp.selectedPlace = {
-    title: data.title,
-    placeId: placeId,
-    imgs: data.imgs || [],
-    description_short: data.description_short,
-    description_long: data.description_long,
-};
-  } catch (error) {
-    console.error("Ошибка при загрузке данных:", error);
-  } finally {
-    if (sidebarApp.loadingPlaceId == placeId) {
-      sidebarApp.loadingPlaceId = null;
+        sidebarApp.selectedPlace = {
+          title: data.title,
+          placeId: placeId,
+          imgs: data.imgs || [],
+          description_short: data.description_short,
+          description_long: data.description_long,
+        };
+      } catch (error) {
+        console.error("Ошибка при загрузке данных:", error);
+      } finally {
+        if (sidebarApp.loadingPlaceId == placeId) {
+          sidebarApp.loadingPlaceId = null;
+        }
+      }
     }
-  }
-}
   </script>
 </body>
 </html>
